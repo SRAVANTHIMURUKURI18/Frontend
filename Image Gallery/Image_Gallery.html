@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thumbnail Image Gallery with Lightbox</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      color: #333;
+    }
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      padding: 20px;
+    }
+    .gallery img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border: 2px solid black;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .gallery img:hover {
+      transform: scale(1.2);
+      border-color: #0056b3;
+    }
+
+    /* Lightbox styles */
+    #lightbox {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      flex-direction: column;
+    }
+    #lightbox img {
+      max-width: 90%;
+      max-height: 80vh;
+      border-radius: 10px;
+      box-shadow: 0 0 20px black;
+    }
+    #lightbox .controls {
+      margin-top: 15px;
+    }
+    #lightbox button {
+      background: #0056b3;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      margin: 0 10px;
+      border-radius: 5px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    #lightbox button:hover {
+      background: #003d7a;
+    }
+    #lightbox .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 30px;
+      color: white;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Thumbnail Image Gallery ft. Indian Cricketers</h1>
+  <div class="gallery">
+    <img src="v.jpg" alt="Virat Kohli" data-index="0" />
+    <img src="kl.jpg" alt="KL Rahul" data-index="1" />
+    <img src="hp.jpg" alt="Hardik Pandya" data-index="2" />
+    <img src="jb.jpg" alt="Jasprit Bumrah" data-index="3" />
+    <img src="sg.jpg" alt="Shubman Gill" data-index="4" />
+  </div>
+
+  <!-- Lightbox -->
+  <div id="lightbox">
+    <button class="close-btn" onclick="closeLightbox()">×</button>
+    <img id="lightbox-img" src="" alt="" />
+    <div class="controls">
+      <button onclick="prevImage()">← Prev</button>
+      <button onclick="nextImage()">Next →</button>
+    </div>
+  </div>
+
+  <script>
+    const images = [
+      {src: "v.jpg", alt: "Virat Kohli"},
+      {src: "kl.jpg", alt: "KL Rahul"},
+      {src: "hp.jpg", alt: "Hardik Pandya"},
+      {src: "jb.jpg", alt: "Jasprit Bumrah"},
+      {src: "sg.jpg", alt: "Shubman Gill"},
+    ];
+
+    const galleryImgs = document.querySelectorAll('.gallery img');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+
+    let currentIndex = 0;
+
+    function openLightbox(index) {
+      currentIndex = index;
+      lightbox.style.display = "flex";
+      updateLightboxImage();
+    }
+
+    function closeLightbox() {
+      lightbox.style.display = "none";
+    }
+
+    function updateLightboxImage() {
+      lightboxImg.src = images[currentIndex].src;
+      lightboxImg.alt = images[currentIndex].alt;
+    }
+
+    function nextImage() {
+      currentIndex = (currentIndex + 1) % images.length;
+      updateLightboxImage();
+    }
+
+    function prevImage() {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      updateLightboxImage();
+    }
+
+    galleryImgs.forEach(img => {
+      img.addEventListener('click', () => {
+        openLightbox(parseInt(img.dataset.index));
+      });
+    });
+
+    // Close lightbox on clicking outside image
+    lightbox.addEventListener('click', (e) => {
+      if(e.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    // Keyboard navigation (optional)
+    document.addEventListener('keydown', (e) => {
+      if(lightbox.style.display === "flex") {
+        if(e.key === "ArrowRight") nextImage();
+        if(e.key === "ArrowLeft") prevImage();
+        if(e.key === "Escape") closeLightbox();
+      }
+    });
+  </script>
+</body>
+</html>
